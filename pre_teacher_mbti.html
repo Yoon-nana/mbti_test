@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>예비강사 성장유형 테스트</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Gaegu:wght@400;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #273044;
+    --navy-2: #38445c;
+    --mint: #15b8a6;
+    --mint-50: #e7f8f5;
+    --blue: #2f6fb2;
+    --blue-50: #e8f2fb;
+    --green: #2f7d58;
+    --green-50: #e9f6ee;
+    --amber: #a86612;
+    --amber-50: #fff2dc;
+    --pink: #b5456e;
+    --pink-50: #fdeaf1;
+    --purple: #6253c6;
+    --purple-50: #efedff;
+    --coral: #b85232;
+    --coral-50: #fff0ea;
+    --bg: #f7f8fb;
+    --surface: #ffffff;
+    --border: rgba(39,48,68,0.12);
+    --text: #1f2933;
+    --muted: #647184;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+  }
+
+  body {
+    min-height: 100vh;
+    font-family: 'Nanum Gothic', sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(circle at 12% 12%, rgba(21,184,166,.10) 0%, transparent 34%),
+      radial-gradient(circle at 88% 18%, rgba(98,83,198,.10) 0%, transparent 36%),
+      linear-gradient(180deg, #fbfcff, var(--bg));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+
+  #app { width: 100%; max-width: 560px; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .panel {
+    background: rgba(255,255,255,.94);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 18px 60px rgba(39,48,68,.10);
+  }
+
+  .start-wrap { padding: 2.4rem 2rem 2.2rem; text-align: center; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--navy);
+    background: var(--mint-50);
+    border: 1px solid rgba(21,184,166,.22);
+    border-radius: 99px;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .main-icon {
+    width: 112px;
+    height: 112px;
+    margin: 0 auto 1.35rem;
+    border-radius: 28px;
+    background: linear-gradient(135deg, #e8f2fb, #e7f8f5);
+    border: 2px solid rgba(47,111,178,.18);
+    display: grid;
+    place-items: center;
+    animation: float 3.2s ease-in-out infinite;
+  }
+
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+
+  .title-big {
+    font-family: 'Gaegu', cursive;
+    font-size: 34px;
+    line-height: 1.22;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: .65rem;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.85;
+    margin-bottom: 1.8rem;
+  }
+
+  .subtitle strong { color: var(--blue); font-weight: 800; }
+
+  .start-btn, .action-btn {
+    width: 100%;
+    max-width: 260px;
+    border: none;
+    border-radius: 99px;
+    background: var(--navy);
+    color: #fff;
+    padding: 14px 24px;
+    font-family: 'Nanum Gothic', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: .18s ease;
+  }
+
+  .start-btn:hover, .action-btn:hover {
+    background: var(--navy-2);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(39,48,68,.22);
+  }
+
+  .quiz-wrap { padding: 1.8rem 1.65rem 2.1rem; }
+
+  .prog-wrap {
+    height: 9px;
+    background: #e9edf4;
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 1.2rem;
+  }
+  .prog-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--mint), var(--blue));
+    border-radius: 99px;
+    transition: width .35s ease;
+  }
+
+  .q-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 1rem;
+  }
+  .q-label { color: var(--muted); font-size: 12px; font-weight: 800; }
+  .q-dim {
+    color: var(--blue);
+    background: var(--blue-50);
+    border-radius: 99px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  .q-text {
+    min-height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: 'Gaegu', cursive;
+    font-size: 23px;
+    line-height: 1.42;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 1.2rem;
+  }
+
+  .opts { display: grid; gap: 10px; }
+  .opt-btn {
+    min-height: 74px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 13px 15px;
+    border-radius: var(--radius-lg);
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    text-align: left;
+    font-family: 'Nanum Gothic', sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    font-weight: 800;
+    cursor: pointer;
+    transition: .16s ease;
+  }
+  .opt-btn:hover {
+    border-color: rgba(21,184,166,.36);
+    background: #f6fffd;
+    transform: translateX(4px);
+  }
+  .opt-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    font-family: 'Gaegu', cursive;
+    font-size: 19px;
+    font-weight: 700;
+  }
+
+  .result-header {
+    padding: 1.75rem 1.65rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .type-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 99px;
+    background: var(--purple-50);
+    color: var(--purple);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    margin-bottom: .75rem;
+  }
+  .result-name {
+    font-family: 'Gaegu', cursive;
+    color: var(--navy);
+    font-size: 31px;
+    font-weight: 700;
+    margin-bottom: .55rem;
+  }
+  .result-desc {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.85;
+    margin-bottom: .9rem;
+  }
+  .trait-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; }
+  .trait {
+    padding: 5px 11px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: .95rem 0 .45rem;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .section-label::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--mint);
+  }
+
+  .card { padding: 1.2rem 1.35rem; margin-bottom: 1rem; }
+  .score-grid { display: grid; gap: 12px; }
+  .score-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .score-sub { color: var(--muted); font-weight: 700; white-space: nowrap; }
+  .score-bar {
+    height: 9px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    background: #f0f2f6;
+  }
+  .score-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--mint), var(--blue));
+    border-radius: 99px;
+  }
+
+  .info-grid { display: grid; gap: 9px; }
+  .info-item {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 11px 12px;
+  }
+  .info-label {
+    color: var(--blue);
+    font-size: 10px;
+    letter-spacing: .4px;
+    font-weight: 800;
+    margin-bottom: 5px;
+  }
+  .info-text {
+    color: var(--text);
+    font-size: 12.5px;
+    line-height: 1.65;
+    font-weight: 700;
+  }
+
+  .action-wrap {
+    display: flex;
+    justify-content: center;
+    padding-bottom: .4rem;
+  }
+  .confetti-dot {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: confetti 2.1s ease-out forwards;
+  }
+  @keyframes confetti {
+    from { opacity: 1; transform: translateY(-20px) rotate(0deg); }
+    to { opacity: 0; transform: translateY(90px) rotate(360deg); }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <section id="screen-start" class="screen active">
+    <div class="panel start-wrap">
+      <div class="badge">강사양성과정 OT 활동</div>
+      <div class="main-icon" aria-hidden="true">
+        <svg width="70" height="70" viewBox="0 0 70 70" fill="none">
+          <rect x="13" y="17" width="44" height="34" rx="6" fill="#ffffff" stroke="#2f6fb2" stroke-width="3"/>
+          <path d="M20 26H50" stroke="#15b8a6" stroke-width="3" stroke-linecap="round"/>
+          <path d="M20 35H38" stroke="#2f6fb2" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="47" cy="42" r="5" fill="#15b8a6"/>
+          <path d="M29 52L35 60L41 52" fill="#ffffff" stroke="#2f6fb2" stroke-width="3" stroke-linejoin="round"/>
+          <circle cx="19" cy="13" r="4" fill="#f5c242"/>
+          <circle cx="54" cy="14" r="3" fill="#b5456e"/>
+        </svg>
+      </div>
+      <h1 class="title-big">나는 어떤 예비강사일까?</h1>
+      <p class="subtitle">
+        16가지 상황 질문으로 알아보는<br>
+        나의 <strong>강의 준비·소통·피드백 스타일</strong><br>
+        첫날 서로를 알아가는 가벼운 OT 테스트입니다.
+      </p>
+      <button class="start-btn" onclick="startQuiz()">테스트 시작하기</button>
+    </div>
+  </section>
+
+  <section id="screen-quiz" class="screen">
+    <div class="panel quiz-wrap">
+      <div class="prog-wrap"><div class="prog-fill" id="prog"></div></div>
+      <div class="q-meta">
+        <span class="q-label" id="q-label"></span>
+        <span class="q-dim" id="q-dim"></span>
+      </div>
+      <div class="q-text" id="q-text"></div>
+      <div class="opts" id="q-opts"></div>
+    </div>
+  </section>
+
+  <section id="screen-result" class="screen">
+    <div class="panel result-header" id="result-header">
+      <div class="type-badge" id="r-type"></div>
+      <div class="result-name" id="r-name"></div>
+      <p class="result-desc" id="r-desc"></p>
+      <div class="trait-row" id="r-traits"></div>
+    </div>
+
+    <div class="section-label">나의 성향 점수</div>
+    <div class="panel card">
+      <div class="score-grid" id="r-scores"></div>
+    </div>
+
+    <div class="section-label">OT 공유용 한 줄 힌트</div>
+    <div class="panel card">
+      <div class="info-grid" id="r-info"></div>
+    </div>
+
+    <div class="action-wrap">
+      <button class="action-btn" onclick="restart()">처음부터 다시 하기</button>
+    </div>
+  </section>
+</div>
+
+<script>
+const QS = [
+  {dim:'EI', label:'소통 에너지', text:'첫 수업에서 어색한 분위기를 풀어야 한다면?',
+   a:{t:'먼저 말을 걸고 작은 질문으로 분위기를 연다', bg:'#e7f8f5', tc:'#0f766e'},
+   b:{t:'전체 흐름을 차분히 보며 필요한 순간에 개입한다', bg:'#efedff', tc:'#6253c6'}},
+  {dim:'IE', label:'소통 에너지', text:'수업 준비 아이디어가 떠오를 때 나는?',
+   a:{t:'혼자 정리하면서 구조가 잡힐 때 힘이 난다', bg:'#efedff', tc:'#6253c6'},
+   b:{t:'사람들과 말하며 아이디어가 더 커진다', bg:'#e7f8f5', tc:'#0f766e'}},
+  {dim:'EI', label:'소통 에너지', text:'모둠 활동에서 내가 자연스럽게 맡는 역할은?',
+   a:{t:'말문을 열고 참여를 끌어내는 역할', bg:'#e7f8f5', tc:'#0f766e'},
+   b:{t:'흐름을 듣고 빠진 부분을 조용히 채우는 역할', bg:'#efedff', tc:'#6253c6'}},
+  {dim:'IE', label:'소통 에너지', text:'수업 후 에너지를 회복하는 방식은?',
+   a:{t:'혼자 오늘 수업을 돌아보며 정리한다', bg:'#efedff', tc:'#6253c6'},
+   b:{t:'동료와 이야기하며 좋았던 점을 나눈다', bg:'#e7f8f5', tc:'#0f766e'}},
+
+  {dim:'SN', label:'수업 설계', text:'새로운 주제를 수업으로 만들 때 먼저 보는 것은?',
+   a:{t:'학습자가 바로 따라 할 수 있는 구체적 절차', bg:'#fff2dc', tc:'#a86612'},
+   b:{t:'이 수업이 남길 큰 메시지와 가능성', bg:'#fdeaf1', tc:'#b5456e'}},
+  {dim:'NS', label:'수업 설계', text:'활동지를 만들 때 더 끌리는 방식은?',
+   a:{t:'상상하고 연결하며 새로운 활동을 떠올린다', bg:'#fdeaf1', tc:'#b5456e'},
+   b:{t:'예시와 단계가 분명한 활동으로 안정감을 준다', bg:'#fff2dc', tc:'#a86612'}},
+  {dim:'SN', label:'수업 설계', text:'수강생이 어려워할 때 먼저 하는 행동은?',
+   a:{t:'어느 단계에서 막혔는지 구체적으로 확인한다', bg:'#fff2dc', tc:'#a86612'},
+   b:{t:'이 사람이 왜 어렵게 느끼는지 전체 맥락을 본다', bg:'#fdeaf1', tc:'#b5456e'}},
+  {dim:'NS', label:'수업 설계', text:'좋은 수업이라고 느끼는 장면은?',
+   a:{t:'학습자가 “아, 이걸 이렇게도 쓸 수 있구나” 깨닫는 순간', bg:'#fdeaf1', tc:'#b5456e'},
+   b:{t:'학습자가 순서대로 따라 하며 결과물을 완성하는 순간', bg:'#fff2dc', tc:'#a86612'}},
+
+  {dim:'TF', label:'피드백 기준', text:'수강생 결과물이 아쉬울 때 나는?',
+   a:{t:'기준에 맞춰 무엇을 고치면 되는지 짚어준다', bg:'#e8f2fb', tc:'#2f6fb2'},
+   b:{t:'먼저 시도한 점을 인정하고 다음 방향을 제안한다', bg:'#efedff', tc:'#6253c6'}},
+  {dim:'FT', label:'피드백 기준', text:'팀 의견이 갈릴 때 더 신경 쓰는 것은?',
+   a:{t:'서로의 마음과 참여감이 상하지 않는 것', bg:'#efedff', tc:'#6253c6'},
+   b:{t:'근거와 기준이 일관적인 결론을 내는 것', bg:'#e8f2fb', tc:'#2f6fb2'}},
+  {dim:'TF', label:'피드백 기준', text:'수업 규칙을 정할 때 나는?',
+   a:{t:'모두에게 공정한 기준을 먼저 세운다', bg:'#e8f2fb', tc:'#2f6fb2'},
+   b:{t:'학습자가 부담 없이 참여할 분위기를 먼저 본다', bg:'#efedff', tc:'#6253c6'}},
+  {dim:'FT', label:'피드백 기준', text:'칭찬받을 때 더 기분 좋은 말은?',
+   a:{t:'덕분에 사람들이 편하게 참여했어요', bg:'#efedff', tc:'#6253c6'},
+   b:{t:'설명이 정확해서 이해가 빨랐어요', bg:'#e8f2fb', tc:'#2f6fb2'}},
+
+  {dim:'JP', label:'운영 스타일', text:'첫 수업 준비를 할 때 나는?',
+   a:{t:'시간표와 순서를 미리 촘촘히 잡아둔다', bg:'#e9f6ee', tc:'#2f7d58'},
+   b:{t:'큰 흐름만 잡고 현장에 맞춰 조정한다', bg:'#fff0ea', tc:'#b85232'}},
+  {dim:'PJ', label:'운영 스타일', text:'예상 밖 질문이 들어오면?',
+   a:{t:'좋은 기회라고 생각하고 흐름에 맞춰 받아본다', bg:'#fff0ea', tc:'#b85232'},
+   b:{t:'수업 목표와 연결되는지 확인하고 정리한다', bg:'#e9f6ee', tc:'#2f7d58'}},
+  {dim:'JP', label:'운영 스타일', text:'수업 자료 폴더를 보면 내 스타일은?',
+   a:{t:'파일명과 순서가 정리되어 있어야 마음이 편하다', bg:'#e9f6ee', tc:'#2f7d58'},
+   b:{t:'필요할 때 찾아 쓰기 좋으면 어느 정도 괜찮다', bg:'#fff0ea', tc:'#b85232'}},
+  {dim:'PJ', label:'운영 스타일', text:'수업 중 분위기가 예상과 다르면?',
+   a:{t:'즉석에서 활동을 바꾸거나 질문을 추가한다', bg:'#fff0ea', tc:'#b85232'},
+   b:{t:'계획 안에서 조절해 수업 목표를 지킨다', bg:'#e9f6ee', tc:'#2f7d58'}}
+];
+
+const TYPES = {
+  ENFP:{name:'아이디어 촉진형 강사', desc:'사람들과 이야기하며 새로운 활동 아이디어를 잘 만들어내는 유형입니다. 첫날 분위기를 열고, 학습자가 “해보고 싶다”는 마음을 갖게 만드는 힘이 있습니다.', traits:['분위기 전환','창의 활동','동기 부여'], color:['#e7f8f5|#0f766e','#fdeaf1|#b5456e','#fff0ea|#b85232'], tip:'아이디어가 많을수록 활동 목표와 마무리 질문을 함께 정해두면 더 탄탄해집니다.', share:'내가 수업에서 꼭 해보고 싶은 활동은?'},
+  ENFJ:{name:'성장 코치형 강사', desc:'학습자의 마음과 목표를 함께 보며 참여를 이끄는 유형입니다. 사람을 관찰하고 격려하는 힘이 좋아서 첫 수업에서 안정감을 주기 쉽습니다.', traits:['격려','관계 형성','방향 제시'], color:['#e7f8f5|#0f766e','#efedff|#6253c6','#e9f6ee|#2f7d58'], tip:'모두를 챙기려다 과부하가 올 수 있으니 수업 기준도 함께 세워두면 좋습니다.', share:'내가 받고 싶은 수업 분위기는?'},
+  ENTP:{name:'질문 발명형 강사', desc:'당연한 설명도 새롭게 비틀어 질문으로 만드는 유형입니다. 토론, 문제 해결, 아이디어 확장 활동에서 에너지가 잘 살아납니다.', traits:['질문력','토론','실험 정신'], color:['#e7f8f5|#0f766e','#fdeaf1|#b5456e','#e8f2fb|#2f6fb2'], tip:'새로운 시도 전에 학습자가 따라올 최소 단계만 정리하면 전달력이 좋아집니다.', share:'수업에서 던져보고 싶은 질문은?'},
+  ENTJ:{name:'목표 설계형 강사', desc:'수업 목표와 결과물을 분명히 잡고 사람들을 앞으로 이끄는 유형입니다. 프로젝트형 수업이나 성과 공유 활동에 강점이 있습니다.', traits:['목표 설정','추진력','구조화'], color:['#e8f2fb|#2f6fb2','#e9f6ee|#2f7d58','#e7f8f5|#0f766e'], tip:'속도가 빠를 수 있으니 중간 점검과 쉬어가는 질문을 넣으면 더 많은 사람이 따라옵니다.', share:'이번 과정에서 얻고 싶은 결과는?'},
+  ESFP:{name:'참여 유도형 강사', desc:'현장의 반응을 빠르게 읽고 분위기를 살리는 유형입니다. 학습자가 긴장을 풀고 직접 해보게 만드는 데 강합니다.', traits:['활력','현장감','참여'], color:['#fff0ea|#b85232','#e7f8f5|#0f766e','#fdeaf1|#b5456e'], tip:'재미있는 흐름 속에서도 핵심 개념을 한 문장으로 정리해주면 기억에 오래 남습니다.', share:'내가 편하게 참여하게 되는 순간은?'},
+  ESFJ:{name:'분위기 케어형 강사', desc:'학습자의 필요를 잘 알아차리고 조화로운 수업 분위기를 만드는 유형입니다. 첫날 OT에서 서로를 연결하는 역할을 자연스럽게 해냅니다.', traits:['배려','진행 보조','안정감'], color:['#e7f8f5|#0f766e','#efedff|#6253c6','#fff2dc|#a86612'], tip:'분위기뿐 아니라 학습 목표를 눈에 보이게 적어두면 수업의 힘이 더 커집니다.', share:'함께 배우는 사람들에게 바라는 점은?'},
+  ESTP:{name:'현장 해결형 강사', desc:'예상 밖 상황에도 빠르게 대응하고 실습 중심으로 끌고 가는 유형입니다. 말보다 해보면서 배우는 수업에 강합니다.', traits:['순발력','실습','문제 해결'], color:['#fff0ea|#b85232','#e8f2fb|#2f6fb2','#e7f8f5|#0f766e'], tip:'즉흥 대응이 강점인 만큼 활동 전 안전장치와 기준을 짧게 안내하면 좋습니다.', share:'내가 현장에서 잘 해결하는 일은?'},
+  ESTJ:{name:'운영 마스터형 강사', desc:'수업 시간, 자료, 규칙을 안정적으로 운영하는 유형입니다. 학습자가 무엇을 해야 하는지 분명하게 안내하는 힘이 있습니다.', traits:['체계','책임감','운영력'], color:['#e9f6ee|#2f7d58','#e8f2fb|#2f6fb2','#fff2dc|#a86612'], tip:'정해진 흐름 안에서도 학습자의 질문과 감정을 받아줄 여백을 만들면 더 부드럽습니다.', share:'내가 수업에서 꼭 지키고 싶은 규칙은?'},
+  INFP:{name:'성장 응원형 강사', desc:'학습자의 작은 변화와 가능성을 잘 발견하는 유형입니다. 결과보다 과정 속 의미를 살려주는 따뜻한 강점이 있습니다.', traits:['응원','의미 발견','공감'], color:['#efedff|#6253c6','#fdeaf1|#b5456e','#e7f8f5|#0f766e'], tip:'따뜻한 격려에 구체적인 다음 행동을 붙이면 학습자가 더 쉽게 움직입니다.', share:'내가 배우는 사람에게 해주고 싶은 말은?'},
+  INFJ:{name:'의미 연결형 강사', desc:'수업 주제와 사람의 변화를 깊게 연결하는 유형입니다. 왜 이걸 배우는지, 어디에 쓰이는지 설명하는 데 강합니다.', traits:['통찰','방향성','깊이'], color:['#efedff|#6253c6','#e7f8f5|#0f766e','#fdeaf1|#b5456e'], tip:'큰 의미를 말한 뒤 바로 해볼 수 있는 작은 활동을 붙이면 전달력이 좋아집니다.', share:'내가 강사가 되어 전하고 싶은 가치는?'},
+  INTP:{name:'탐구 분석형 강사', desc:'개념의 원리와 구조를 파고드는 유형입니다. 어려운 내용을 논리적으로 풀어 설명하거나 오류를 찾는 데 강합니다.', traits:['분석','원리 이해','호기심'], color:['#efedff|#6253c6','#e8f2fb|#2f6fb2','#fff2dc|#a86612'], tip:'설명이 깊어질수록 학습자의 예시와 속도를 함께 확인하면 더 좋습니다.', share:'내가 끝까지 파고들고 싶은 주제는?'},
+  INTJ:{name:'전략 설계형 강사', desc:'목표를 보고 전체 수업 구조를 설계하는 유형입니다. 긴 과정의 흐름을 잡고 결과물까지 연결하는 데 강점이 있습니다.', traits:['전략','설계','독립성'], color:['#efedff|#6253c6','#e8f2fb|#2f6fb2','#e9f6ee|#2f7d58'], tip:'완성도 높은 설계에 중간 피드백 시간을 넣으면 학습자와 더 잘 맞춰갈 수 있습니다.', share:'내가 만들고 싶은 수업 결과물은?'},
+  ISFP:{name:'감각 표현형 강사', desc:'학습자가 편안하게 표현하고 시도할 수 있게 돕는 유형입니다. 시각 자료, 활동지, 결과물의 분위기를 잘 살립니다.', traits:['표현','온화함','감각'], color:['#fdeaf1|#b5456e','#fff2dc|#a86612','#efedff|#6253c6'], tip:'자유로운 표현 활동에 평가 기준을 아주 간단히 붙이면 학습자가 더 안심합니다.', share:'나를 표현하는 키워드 3가지는?'},
+  ISFJ:{name:'세심한 돌봄형 강사', desc:'학습자가 놓칠 수 있는 부분을 조용히 챙기는 유형입니다. 준비물, 안내, 반복 설명처럼 수업의 안정감을 만드는 힘이 있습니다.', traits:['세심함','배려','준비'], color:['#e7f8f5|#0f766e','#fff2dc|#a86612','#efedff|#6253c6'], tip:'모든 것을 챙기려 하기보다 학습자가 스스로 해볼 공간도 남겨두면 좋습니다.', share:'내가 편하게 배울 수 있는 환경은?'},
+  ISTP:{name:'실습 장인형 강사', desc:'직접 만지고 해보며 배우는 방식을 좋아하는 유형입니다. 복잡한 설명보다 실습으로 감을 잡게 하는 데 강합니다.', traits:['실용','도구 활용','독립성'], color:['#e8f2fb|#2f6fb2','#fff0ea|#b85232','#e9f6ee|#2f7d58'], tip:'실습 전에 “왜 하는지”를 짧게 연결하면 활동의 의미가 더 살아납니다.', share:'내가 직접 해보며 배운 경험은?'},
+  ISTJ:{name:'준비형 안정가 강사', desc:'꼼꼼한 준비와 안정적인 진행으로 신뢰를 주는 유형입니다. 처음 배우는 사람에게 필요한 순서와 기준을 잘 잡아줍니다.', traits:['꼼꼼함','안정감','신뢰'], color:['#e9f6ee|#2f7d58','#e8f2fb|#2f6fb2','#fff2dc|#a86612'], tip:'완벽한 준비에만 머무르지 말고 작은 질문과 상호작용을 넣으면 수업이 더 살아납니다.', share:'내가 강사로서 갖고 싶은 습관은?'}
+};
+
+let scores = {E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
+let cur = 0;
+
+function startQuiz(){
+  scores = {E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0};
+  cur = 0;
+  show('screen-quiz');
+  renderQ();
+}
+
+function renderQ(){
+  const q = QS[cur];
+  document.getElementById('q-label').textContent = `질문 ${cur + 1} / ${QS.length}`;
+  document.getElementById('q-dim').textContent = q.label;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('prog').style.width = `${(cur / QS.length) * 100}%`;
+  document.getElementById('q-opts').innerHTML = `
+    <button class="opt-btn" onclick="answer('a')">
+      <div class="opt-icon" style="background:${q.a.bg};color:${q.a.tc}">A</div>
+      <span>${q.a.t}</span>
+    </button>
+    <button class="opt-btn" onclick="answer('b')">
+      <div class="opt-icon" style="background:${q.b.bg};color:${q.b.tc}">B</div>
+      <span>${q.b.t}</span>
+    </button>`;
+}
+
+function answer(choice){
+  const q = QS[cur];
+  if(choice === 'a') scores[q.dim[0]]++;
+  else scores[q.dim[1]]++;
+  cur++;
+  if(cur < QS.length) renderQ();
+  else showResult();
+}
+
+function pick(a,b){ return scores[a] >= scores[b] ? a : b; }
+
+function axisScore(a,b,label,left,right){
+  const total = scores[a] + scores[b] || 1;
+  const winner = pick(a,b);
+  const loser = winner === a ? b : a;
+  const pct = Math.round((scores[winner] / total) * 100);
+  return {label, winner, loser, pct, left, right};
+}
+
+function renderScores(){
+  const axes = [
+    axisScore('E','I','소통 에너지','외향형','내향형'),
+    axisScore('S','N','수업 설계','현실형','아이디어형'),
+    axisScore('T','F','피드백 기준','기준형','공감형'),
+    axisScore('J','P','운영 스타일','계획형','유연형')
+  ];
+  document.getElementById('r-scores').innerHTML = axes.map(axis => `
+    <div>
+      <div class="score-top">
+        <span>${axis.label} · ${axis.winner}</span>
+        <span class="score-sub">${axis.winner} ${axis.pct}% / ${axis.loser} ${100-axis.pct}%</span>
+      </div>
+      <div class="score-bar"><div class="score-fill" style="width:${axis.pct}%"></div></div>
+    </div>
+  `).join('');
+}
+
+function showResult(){
+  document.getElementById('prog').style.width = '100%';
+  const type = pick('E','I') + pick('N','S') + pick('F','T') + pick('P','J');
+  const r = TYPES[type] || TYPES.INFP;
+  document.getElementById('r-type').textContent = type;
+  document.getElementById('r-name').textContent = r.name;
+  document.getElementById('r-desc').textContent = r.desc;
+  document.getElementById('r-traits').innerHTML = r.traits.map((trait, i) => {
+    const [bg, tc] = r.color[i].split('|');
+    return `<span class="trait" style="background:${bg};color:${tc}">${trait}</span>`;
+  }).join('');
+  renderScores();
+  document.getElementById('r-info').innerHTML = `
+    <div class="info-item">
+      <div class="info-label">성장 팁</div>
+      <div class="info-text">${r.tip}</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">첫날 나눔 질문</div>
+      <div class="info-text">${r.share}</div>
+    </div>
+    <div class="info-item">
+      <div class="info-label">기억할 점</div>
+      <div class="info-text">이 결과는 성격을 단정하는 검사가 아니라, 서로의 학습·강의 스타일을 가볍게 알아보는 OT 활동입니다.</div>
+    </div>`;
+  show('screen-result');
+  spawnConfetti();
+}
+
+function spawnConfetti(){
+  const wrap = document.getElementById('result-header');
+  const colors = ['#15b8a6','#2f6fb2','#f5c242','#b5456e','#6253c6'];
+  for(let i=0; i<14; i++){
+    const dot = document.createElement('div');
+    dot.className = 'confetti-dot';
+    dot.style.cssText = `
+      left:${Math.random()*100}%;top:0;
+      width:${6+Math.random()*7}px;height:${6+Math.random()*7}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-delay:${Math.random()*.45}s;`;
+    wrap.appendChild(dot);
+    setTimeout(() => dot.remove(), 2400);
+  }
+}
+
+function restart(){ show('screen-start'); }
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>
